@@ -1,6 +1,11 @@
 package com.home.sarafan.controllers;
 
-import com.home.sarafan.exceptions.ObjectNotFoundException;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.home.sarafan.domain.Message;
+import com.home.sarafan.domain.Views;
+import com.home.sarafan.repositories.MessageRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,78 +15,44 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @RestController
 @RequestMapping("message")
+@RequiredArgsConstructor
 public class MessageController {
 
-    private final AtomicInteger count = new AtomicInteger(4);
-
-    private final List<Map<String, String>> messages = Collections.synchronizedList(
-            new ArrayList<Map<String, String>>() {{
-                add(new HashMap<String, String>() {{
-                    put("id", "1");
-                    put("text", "First message");
-                }});
-
-                add(new HashMap<String, String>() {{
-                    put("id", "2");
-                    put("text", "Second message");
-                }});
-
-                add(new HashMap<String, String>() {{
-                    put("id", "3");
-                    put("text", "Third message");
-                }});
-            }});
+    private final MessageRepository messageRepository;
 
     @GetMapping
-    public List<Map<String, String>> listMessages() {
-        return messages;
+    @JsonView(Views.IdName.class)
+    public List<Message> listMessages() {
+        return messageRepository.findAll();
     }
 
     @GetMapping("{id}")
-    public Map<String, String> getMessage(@PathVariable String id) {
-        return getMessageById(id);
-    }
-
-    @PostMapping
-    public Map<String, String> createMessage(@RequestBody Map<String, String> message) {
-        message.put("id", String.valueOf(count.getAndIncrement()));
-
-        messages.add(message);
-
+    @JsonView(Views.FullMessage.class)
+    public Message getMessage(@PathVariable("id") Message message) {
         return message;
     }
 
+    @PostMapping
+    public Message createMessage(@RequestBody Message message) {
+        message.setCreationDate(LocalDateTime.now());
+        return messageRepository.save(message);
+    }
+
     @PutMapping("{id}")
-    public Map<String, String> updateMessage(
-            @PathVariable String id,
-            @RequestBody Map<String, String> message) {
+    public Message updateMessage(@PathVariable("id") Message messageFromDb, @RequestBody Message message) {
 
-        Map<String, String> messageFromDb = getMessageById(id);
-        messageFromDb.putAll(message);
-        messageFromDb.put("id", id);
+        BeanUtils.copyProperties(message, messageFromDb, "id");
 
-        return messageFromDb;
+        return messageRepository.save(messageFromDb);
     }
 
     @DeleteMapping("{id}")
-    public void deleteMessage(@PathVariable String id) {
-
-        Map<String, String> message = getMessageById(id);
-        messages.remove(message);
-    }
-
-    private Map<String, String> getMessageById(String id) {
-        return messages.stream()
-                .filter(message -> message.get("id").equals(id))
-                .findFirst().orElseThrow(() -> new ObjectNotFoundException("Unable to found object with id: " + id));
+    public void deleteMessage(@PathVariable("id") Message message) {
+        messageRepository.delete(message);
     }
 }
