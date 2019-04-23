@@ -1,5 +1,8 @@
 spring:
 
+  main:
+    allow-bean-definition-overriding: true
+
   datasource:
     url: jdbc:postgresql://127.0.0.1/sarafan
     username: postgres
@@ -14,3 +17,16 @@ spring:
         jdbc:
           lob:
             non_contextual_creation: true
+
+security:
+  oauth2:
+    client:
+      clientId: 628647212903-s2nkfl82uodmu30kjlpvh00itsuul7sg.apps.googleusercontent.com
+      clientSecret: yZsSENAh5Zf2rHI61Ut6AI6j
+      accessTokenUri: https://www.googleapis.com/oauth2/v4/token
+      userAuthorizationUri: https://accounts.google.com/o/oauth2/v2/auth
+      clientAuthenticationScheme: form
+      scope: openid,email,profile
+    resource:
+      userInfoUri: https://www.googleapis.com/oauth2/v3/userinfo
+      preferTokenInfo: true
