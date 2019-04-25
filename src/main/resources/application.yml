@@ -18,11 +18,17 @@ spring:
           lob:
             non_contextual_creation: true
 
+  session:
+    jdbc:
+      initialize-schema: always
+      table-name: SPRING_SESSION
+      schema: classpath:session_tables.sql
+
 security:
   oauth2:
     client:
       clientId: 628647212903-s2nkfl82uodmu30kjlpvh00itsuul7sg.apps.googleusercontent.com
-      clientSecret: yZsSENAh5Zf2rHI61Ut6AI6j
+      clientSecret: ${CLIENT_SECRET}
       accessTokenUri: https://www.googleapis.com/oauth2/v4/token
       userAuthorizationUri: https://accounts.google.com/o/oauth2/v2/auth
       clientAuthenticationScheme: form
