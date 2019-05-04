@@ -3,6 +3,7 @@ package com.home.sarafan.controllers;
 import com.home.sarafan.domain.User;
 import com.home.sarafan.repositories.MessageRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,6 +23,9 @@ public class MainController {
 
     private final MessageRepository messageRepository;
 
+    @Value("${spring.profiles.active}")
+    private String profile;
+
     @GetMapping
     public String main(Model model, @AuthenticationPrincipal User user) {
         Map<Object, Object> data = new HashMap<>();
@@ -29,6 +33,7 @@ public class MainController {
         data.put(MESSAGES, messageRepository.findAll());
 
         model.addAttribute("frontEndData", data);
+        model.addAttribute("isDevMode", "dev".equals(profile));
 
         return "index";
     }
