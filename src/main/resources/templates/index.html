@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.springframework.org/schema/mvc">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" xmlns:th="http://www.thymeleaf.org">
+    <meta charset="UTF-8">
     <title>Sarafan</title>
     <script th:inline="javascript">
         const frontEndData = [[${frontEndData}]];
@@ -9,7 +9,7 @@
 </head>
 <body>
     <h3>Sarafan</h3>
-    <div id="app">{{ message }}</div>
+    <div id="app"></div>
     <script th:src="${isDevMode} ? 'http://localhost:8000/main.js' : '/js/main.js'"></script>
 </body>
 </html>

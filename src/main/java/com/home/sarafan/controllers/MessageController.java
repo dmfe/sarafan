@@ -6,6 +6,8 @@ import com.home.sarafan.domain.Views;
 import com.home.sarafan.repositories.MessageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -54,5 +56,11 @@ public class MessageController {
     @DeleteMapping("{id}")
     public void deleteMessage(@PathVariable("id") Message message) {
         messageRepository.delete(message);
+    }
+
+    @MessageMapping("/change")
+    @SendTo("/topic/activity")
+    public Message change(Message message) {
+        return messageRepository.save(message);
     }
 }
