@@ -30,6 +30,13 @@ module.exports = {
             {
                 test: /\.vue$/,
                 loader: 'vue-loader'
+            },
+            {
+                test: /\.css$/,
+                use: [
+                    'vue-style-loader',
+                    'css-loader'
+                ]
             }
         ]
     },
@@ -42,4 +49,4 @@ module.exports = {
             path.join(__dirname, 'node_modules'),
         ],
     }
-}
+};

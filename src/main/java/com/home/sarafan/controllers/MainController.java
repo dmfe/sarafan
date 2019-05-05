@@ -29,8 +29,11 @@ public class MainController {
     @GetMapping
     public String main(Model model, @AuthenticationPrincipal User user) {
         Map<Object, Object> data = new HashMap<>();
-        data.put(PROFILE, user);
-        data.put(MESSAGES, messageRepository.findAll());
+
+        if (user != null) {
+            data.put(PROFILE, user);
+            data.put(MESSAGES, messageRepository.findAll());
+        }
 
         model.addAttribute("frontEndData", data);
         model.addAttribute("isDevMode", "dev".equals(profile));
